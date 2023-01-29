@@ -1,0 +1,41 @@
+version: "2.1"
+services:
+  app:
+    image: myapp
+    container_name: myapp
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
+    networks:
+      - lab_default
+    env_file:
+      - ./var.env
+
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    restart: always
+    healthcheck:
+      test: "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute \"SHOW DATABASES;\""
+      interval: 1s
+      timeout: 1s
+      retries: 20
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    networks:
+      - lab_default
+    env_file:
+      - ./var.env
+    
+volumes:
+  db:
+
+  
+networks:
+  lab_default:
+    # Use a custom driver
+    driver: bridge

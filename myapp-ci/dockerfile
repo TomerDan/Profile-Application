@@ -1,0 +1,19 @@
+FROM python
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN python -m pip install --upgrade pip
+
+RUN pip install -r requirements.txt
+
+RUN pip install flask-mysqldb
+
+COPY templates ./templates
+
+COPY static ./static
+
+COPY app.py .
+
+CMD [ "python", "app.py"]

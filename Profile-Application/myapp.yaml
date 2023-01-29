@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  labels:
+    app: myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp
+          image: gcr.io/just-duality-370009/myapp:21.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+          - name: MYSQL_PASSWORD
+            value: Password$123456
+          - name: MYSQL_ROOT_PASSWORD
+            value: Password$123456
+          - name: MYSQL_DATABASE
+            value: geekprofile
+          - name: MYSQL_USER
+            value: root
+          - name: MYSQL_HOST
+            value: mysql
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: myapp
+  type: ClusterIP
+
+
+
